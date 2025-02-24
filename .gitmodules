@@ -4,3 +4,6 @@
 [submodule "src/rslidar_sdk"]
 	path = src/rslidar_sdk
 	url = https://github.com/RoboSense-LiDAR/rslidar_sdk.git
+[submodule "src/zed-ros2-wrapper"]
+	path = src/zed-ros2-wrapper
+	url = https://github.com/stereolabs/zed-ros2-wrapper.git
