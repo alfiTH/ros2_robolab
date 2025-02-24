@@ -1,7 +1,10 @@
 # ros2_robolab
 The robolab heretic repository
 
-
+You must clone the repository with 
+```bash
+git clone --recurse-submodules 
+```
 
 
 
@@ -26,12 +29,12 @@ to
 
 ### zed_wrapper/config/common_stereo.yaml
 ```bash
-cp config/common_stereo.yaml src/zed-ros2-wrapper/zed_wrapper/config/common_stereo.yaml
+cp configs/common_stereo.yaml src/zed-ros2-wrapper/zed_wrapper/config/common_stereo.yaml
 ```
 
 ### zed_wrapper/config/zed2i.yaml
 ```bash
-cp config/zed2i.yaml src/zed-ros2-wrapper/zed_wrapper/config/zed2i.yaml
+cp configs/zed2i.yaml src/zed-ros2-wrapper/zed_wrapper/config/zed2i.yaml
 ```
 ### zed_wrapper/launch/zed_camera.launch.py
 Change line 301
