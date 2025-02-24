@@ -1,0 +1,39 @@
+#include "camera_pkg/rico_theta_z1.hpp"
+
+RicoThetaZ1::RicoThetaZ1() : Node("camera_component")
+{
+    publisher_ = this->create_publisher<sensor_msgs::msg::Image>("camera/image", 10);
+
+    std::string pipeline = "thetauvcsrc mode=2K ! queue ! h264parse ! nvdec ! gldownload ! queue ! videoconvert n-threads=2 ! video/x-raw,format=BGR ! queue ! appsink drop=true sync=false";
+    capture_.open(pipeline, cv::CAP_GSTREAMER);
+
+    if (!capture_.isOpened()) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to open camera.");
+        return;
+    }
+
+    timer_ = this->create_wall_timer(
+        std::chrono::milliseconds(100), std::bind(&RicoThetaZ1::captureAndPublish, this));
+}
+
+void RicoThetaZ1::captureAndPublish()
+{
+    cv::Mat cv_frame;
+    capture_ >> cv_frame;
+
+    if (cv_frame.empty()) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to capture frame.");
+        return;
+    }
+
+    auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", cv_frame).toImageMsg();
+    publisher_->publish(*msg);
+}
+
+int main(int argc, char * argv[])
+{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<RicoThetaZ1>());
+    rclcpp::shutdown();
+    return 0;
+}

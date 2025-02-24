@@ -1,3 +1,16 @@
+ros2bags/
+install/
+log/
+build/
+
+
+*.db3
+*.macp
+*.zip
+*.zstd
+__pycache__
+
+
 # Prerequisites
 *.d
 

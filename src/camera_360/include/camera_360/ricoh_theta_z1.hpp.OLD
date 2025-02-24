@@ -1,0 +1,22 @@
+#ifndef RICOH_THETA_Z1_HPP
+#define RICOH_THETA_Z1_HPP
+
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
+
+class RicoThetaZ1 : public rclcpp::Node
+{
+public:
+    RicoThetaZ1();
+
+private:
+    void captureAndPublish();
+
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_;
+    cv::VideoCapture capture_;
+    rclcpp::TimerBase::SharedPtr timer_;
+};
+
+#endif // RICOH_THETA_Z1_HPP
