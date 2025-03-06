@@ -5,7 +5,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#define DEBUG
+#define LOW_RESOLUTION
+
+//#define DEBUG
 #if defined(DEBUG)
     #include <chrono>
 #endif // DEBUG
@@ -21,7 +23,7 @@ public:
         compressed_image_pub_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("camera_360/image/compressed", 10);
 
         // Inicializar el pipeline de GStreamer
-        pipeline = "thetauvcsrc mode=2K ! queue ! h264parse ! nvdec ! gldownload ! queue ! videoconvert n-threads=2 ! video/x-raw,format=BGR ! queue ! appsink drop=true sync=false";
+        pipeline = "thetauvcsrc mode=2K ! queue ! h264parse ! nvdec ! gldownload ! queue ! videoconvert n-threads=0 ! video/x-raw,format=BGR ! queue ! appsink drop=true sync=false";
         capture.open(pipeline, cv::CAP_GSTREAMER);
 
         while (!capture.isOpened())
@@ -46,6 +48,7 @@ private:
         try{
             if (!capture.isOpened())
             {
+                RCLCPP_WARN(this->get_logger(), "Camara no abierta, rinetentrando conexion");
                 capture.release();
                 sleep(1);
                 capture.open(pipeline, cv::CAP_GSTREAMER);
@@ -60,57 +63,58 @@ private:
             RCLCPP_ERROR(this->get_logger(), ex.what());
             return;
         }
+
         #if defined(DEBUG)
             auto t1 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-
-        capture >> frame; // Captura el frame de la cámara
+        try{
+            capture >> frame; // Captura el frame de la cámara
+        }
+        catch (const std::exception& ex){
+            RCLCPP_ERROR(this->get_logger(), ("Problema en la captura de la imagen: " + std::string(ex.what())).c_str());
+            return;
+        }
 
         #if defined(DEBUG)
             auto t2 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-
         if (frame.empty())
         {
             RCLCPP_WARN(this->get_logger(), "Frame vacío recibido");
+            capture.release();
             return;
         }
-
 
         #if defined(DEBUG)
             auto t3 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-        cv::resize(frame, frame, this->frame_size);
-
+        #if defined(LOW_RESOLUTION)
+            cv::resize(frame, frame, this->frame_size);
+        #endif
 
         #if defined(DEBUG)
             auto t4 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-        // Convertir el frame de OpenCV a un mensaje de imagen de ROS
         auto tmp_msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame);
 
         #if defined(DEBUG)
             auto t5 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-
         auto msg = tmp_msg.toImageMsg();
+
         #if defined(DEBUG)
             auto t6 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
         auto compressed_msg = tmp_msg.toCompressedImageMsg(cv_bridge::JPG);
+
         #if defined(DEBUG)
             auto t7 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-
-       
-
-        // Publicar la imagen
         image_pub_->publish(*msg);
+
         #if defined(DEBUG)
             auto t8 = std::chrono::high_resolution_clock::now();
         #endif // DEBUG
-
-        // Crear y publicar la imagen comprimida
         compressed_image_pub_->publish(*compressed_msg);
 
         #if defined(DEBUG)
@@ -139,8 +143,11 @@ private:
     //Opencv things
     cv::Mat frame;
     cv::VideoCapture capture;
-    std::string pipeline;   
-    const cv::Size frame_size = cv::Size(960, 480);
+    std::string pipeline;  
+    #if defined(LOW_RESOLUTION)
+        const cv::Size frame_size = cv::Size(960, 480);
+    #endif 
+
 
     // Ros2 things
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_;

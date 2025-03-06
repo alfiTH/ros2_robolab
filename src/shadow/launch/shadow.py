@@ -124,7 +124,21 @@ def generate_launch_description():
             remappings=[
             ('/cloud_in', '/rslidar_points')
                         ]
-        )
+    )
+
+    TTS_node = Node(
+        package="tts_package",
+        executable="tts_node",
+        name='tts_node',
+    )
+
+    joystick_topic_node = Node(
+        package="joystick_topic_publisher",
+        executable="joystick_topic_node",
+        name='joystick_topic_node',
+    )
+
+
 
 
     return LaunchDescription([
@@ -138,6 +152,8 @@ def generate_launch_description():
         ricoh_theta_z1_node,
         camera_name_param,
         zed_launch_file,
+        TTS_node,
+        joystick_topic_node,
         rviz_node
 
     ])

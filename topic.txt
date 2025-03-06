@@ -1,14 +1,9 @@
 /camera_360/image/compressed
-/camera_360/image
 /zed/robot_description
 /zed/zed_node/rgb/camera_info
-/zed/zed_node/rgb/image_rect_color
 /zed/zed_node/rgb/image_rect_color/compressed
-/zed/zed_node/rgb/image_rect_color/compressedDepth
 /zed/zed_node/depth/camera_info
 /zed/zed_node/depth/depth_registered
-/zed/zed_node/depth/depth_registered/compressed
-/zed/zed_node/depth/depth_registered/compressedDepth
 /zed/zed_node/point_cloud/cloud_registered
 /zed/zed_node/left/camera_info
 /zed/zed_node/right/camera_info
@@ -22,6 +17,8 @@
 /zed/zed_node/path_odom
 /tf
 /tf_static
+/sync_command
+/speech_command
 /rslidar_bpeal_points
 /rslidar_helios_points
 /robot_description
