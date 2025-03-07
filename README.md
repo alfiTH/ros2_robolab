@@ -39,8 +39,9 @@ source /opt/ros/humble/setup.bash
 colcon build
 source install/setup.bash 
 ```
+si tienes fallo en la cámara 360 con al librería cv_bidge, cambia el .h por .hpp
 
-# Ejecucion
+# Ejecución
 ```bash 
 source /opt/ros/humble/setup.bash 
 source install/setup.bash 
@@ -55,7 +56,13 @@ source install/setup.bash
 ros2 bag play ../rosbag2_2025_03_06-17_58_18/ --loop --clock #--rate 1.0
 ```
 
-si teiens fallo en la camara 360 con al libreria cv_bidge, cambia el .h por .hpp
+En otra terminal 
+```bash 
+source /opt/ros/humble/setup.bash 
+source install/setup.bash 
+ros2 run anonymizer anonymizer_node 
+```
+
 
 # Same changes
 
