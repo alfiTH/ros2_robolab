@@ -42,6 +42,8 @@ source install/setup.bash
 si tienes fallo en la cámara 360 con al librería cv_bidge, cambia el .h por .hpp
 
 # Ejecución
+
+## Visualizacion de topics con Rviz
 ```bash 
 source /opt/ros/humble/setup.bash 
 source install/setup.bash 
@@ -49,6 +51,7 @@ rviz2
 # Una vez abierto arriba file carga la congifuración de src/shadow/config/shadow_rviz_compressed.rviz
 ```
 
+## Volcado de topics con ros2bag play
 En otra terminal 
 ```bash 
 source /opt/ros/humble/setup.bash 
@@ -56,6 +59,7 @@ source install/setup.bash
 ros2 bag play ../rosbag2_2025_03_06-17_58_18/ --loop --clock #--rate 1.0
 ```
 
+## Ejecucuion del anonimizador de imagenes
 En otra terminal 
 ```bash 
 source /opt/ros/humble/setup.bash 
@@ -63,6 +67,15 @@ source install/setup.bash
 ros2 run anonymizer anonymizer_node 
 ```
 
+
+
+## Guardado de topics con ros2bag record
+Este es para guardar los sensores no para reproducirlos
+```bash 
+source /opt/ros/humble/setup.bash 
+source install/setup.bash 
+ros2 bag record --compression-mode file --compression-format zstd -b 1000000000 -s mcap $(cat topic.txt)
+```
 
 # Same changes
 
